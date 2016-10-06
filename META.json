@@ -71,7 +71,7 @@
          "web" : "https://github.com/JaSei/Test-RestAPI"
       }
    },
-   "version" : "0.1.0",
+   "version" : "0.1.1",
    "x_authority" : "cpan:JASEI",
    "x_serialization_backend" : "JSON::PP version 2.27300"
 }

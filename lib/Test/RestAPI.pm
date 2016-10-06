@@ -1,7 +1,7 @@
 package Test::RestAPI;
 use Moo;
 
-our $VERSION = '0.1.0';
+our $VERSION = '0.1.1';
 
 use Types::Standard qw(ArrayRef InstanceOf Int Str);
 use Test::RestAPI::Endpoint qw(convert_path_to_filename);
@@ -9,6 +9,7 @@ use Test::RestAPI::MojoGenerator;
 use Port::Generator;
 use Path::Tiny;
 use Mojo::JSON qw(decode_json);
+use Mojo::UserAgent;
 
 BEGIN {
     if ($^O eq 'MSWin32') {
