@@ -18,7 +18,7 @@ my $uri = $api->uri;
 my $ua = Mojo::UserAgent->new();
 is($ua->get($uri)->res->body(), 'Hello', 'response ok');
 
-system 'cat '.$api->mojo_home.'/log/production.log';
+#system 'cat '.$api->mojo_home.'/log/production.log';
 
 undef $api;
 sleep 1;

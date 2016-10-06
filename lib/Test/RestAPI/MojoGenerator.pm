@@ -3,7 +3,6 @@ use Moo;
 
 use Mojo::Template;
 use Path::Tiny;
-use Data::Dumper;
 
 =head1 NAME
 
@@ -57,7 +56,7 @@ use Mojo::JSON qw(encode_json);
 
     path(app->home(), "<%= $endpoint->path_as_filename %>")->append(encode_json($c->req->body)."\n");
 
-    $c->render(<%= $endpoint->render_as_string %>);
+    $c->render(%{<%= $endpoint->render_as_string %>});
 };
 % }
 

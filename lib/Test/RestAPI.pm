@@ -1,7 +1,7 @@
 package Test::RestAPI;
 use Moo;
 
-our $VERSION = '0.1.1';
+our $VERSION = '0.1.2';
 
 use Types::Standard qw(ArrayRef InstanceOf Int Str);
 use Test::RestAPI::Endpoint qw(convert_path_to_filename);
@@ -133,6 +133,8 @@ sub start {
     my ($self) = @_;
 
     my $app_path = $self->mojo_app_generator->create_app($self->endpoints);
+
+    use feature qw(say);
 
     $self->pid($self->_start($app_path));
 }

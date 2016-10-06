@@ -2,6 +2,7 @@ package Test::RestAPI::Endpoint;
 use Moo;
 
 use Types::Standard qw(Enum Str);
+use Data::Dumper;
 
 use parent 'Exporter';
 
@@ -79,12 +80,11 @@ has 'render' => (
 sub render_as_string {
     my ($self) = @_;
 
-    my @ret;
-    while (my ($k,$v) = each %{$self->render}) {
-        push @ret, sprintf '%s => "%s"', $k, $v;
-    }
+    my $dumper = Data::Dumper->new([$self->render]);
+    $dumper->Indent(0);
+    $dumper->Terse(1);
 
-    return join ',', @ret;
+    return $dumper->Dump();
 }
 
 =head2 path_as_filename
