@@ -29,3 +29,5 @@ cover_db/
 MYMETA.*
 
 /Test-RestAPI-*
+.carmel/
+cpanfile.snapshot
