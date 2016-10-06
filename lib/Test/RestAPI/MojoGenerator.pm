@@ -3,6 +3,7 @@ use Moo;
 
 use Mojo::Template;
 use Path::Tiny;
+use Data::Dumper;
 
 =head1 NAME
 
@@ -18,6 +19,12 @@ Test::RestAPI::MojoGenerator - class for generate Mojo app
 
 =head1 DESCRIPTION
 
+This class generate mojo application.
+
+Mojo application have /app_mojo_healtcheck endpoint which return text 'OK everytime.
+
+Each endpoint append request body to file.
+
 =head1 METHODS
 
 =head2 new(%attribute)
@@ -26,8 +33,13 @@ Test::RestAPI::MojoGenerator - class for generate Mojo app
 
 =cut
 
-use feature qw(say);
-use Data::Dumper;
+=head2 create_app($endpoints)
+
+list (ArrayRef) of L<Test::RestAPI::Endpoint>
+
+create mojo app with C<$endpoints> and return temp file with application
+
+=cut
 sub create_app {
     my ($self, $endpoints) = @_;
 

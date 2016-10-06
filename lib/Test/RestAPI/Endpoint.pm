@@ -1,6 +1,8 @@
 package Test::RestAPI::Endpoint;
 use Moo;
 
+use Types::Standard qw(Enum Str);
+
 use parent 'Exporter';
 
 our @EXPORT_OK = qw(convert_path_to_filename);
@@ -9,9 +11,9 @@ our @EXPORT_OK = qw(convert_path_to_filename);
 
 Test::RestAPI::Endpoint - API endpoint
 
-=head1 SYNOPSIS
-
 =head1 DESCRIPTION
+
+This class describe API endpoint.
 
 =head1 FUNCTIONS
 
@@ -32,20 +34,41 @@ sub convert_path_to_filename {
 
 =head3 %attribute
 
-=head4 endpoint
+=head4 path
 
+L<Mojolicious::Routes> paths
 
+for more examples see L<Mojolicious::Guides::Routing>
+
+default is '/' (root)
 
 =cut
-
 has 'path' => (
-    is => 'ro',
+    is      => 'ro',
+    isa     => Str,
+    default => '/',
 );
 
+=head4 method
+
+HTTP method
+
+support are C<get>|C<head>|C<options>|C<patch>|C<post>|C<put>|C<any>
+
+default is C<get>
+
+=cut
 has 'method' => (
-    is => 'ro',
+    is      => 'ro',
+    isa     => Enum [qw(get head options path post put any)],
+    default => 'get',
 );
 
+=head4 render
+
+same arguments as L<Mojolicious::Renderer> C<render> method
+
+=cut
 has 'render' => (
     is => 'ro',
 );
@@ -73,8 +96,6 @@ sub path_as_filename {
     return convert_path_to_filename($self->path);
 }
 
-
-
 =head1 LICENSE
 
 Copyright (C) Avast Software.
@@ -89,4 +110,3 @@ Jan Seidl E<lt>seidl@avast.comE<gt>
 =cut
 
 1;
-

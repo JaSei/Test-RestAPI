@@ -8,6 +8,21 @@ use Test::RestAPI::Endpoint qw(convert_path_to_filename);
 use Test::RestAPI::MojoGenerator;
 use Port::Generator;
 use Path::Tiny;
+use Mojo::JSON qw(decode_json);
+
+BEGIN {
+    if ($^O eq 'MSWin32') {
+        ## no critic (ProhibitStringyEval)
+        eval q{
+            use Win32::Process qw(NORMAL_PRIORITY_CLASS);
+        };
+
+        die $@ if $@;
+    }
+    else {
+        use constant NORMAL_PRIORITY_CLASS => 'fake';
+    }
+}
 
 =head1 NAME
 
@@ -146,12 +161,23 @@ sub _create_uri {
 }
 
 sub _start_win {
-    my ($app_path) = @_;
+    my ($self, $app_path) = @_;
 
     require Win32::Process;
     Win32::Process->import();
 
-    ...
+    my $args = 'perl '.$app_path->stringify.' '.$self->_mojo_args();
+
+    Win32::Process::Create(
+        my $proc,
+        $^X,
+        $args,
+        0,
+        NORMAL_PRIORITY_CLASS,
+        "."
+    ) || die "Process $args start fail $^E";
+
+    return $proc->GetProcessID();
 }
 
 sub _start_fork {
@@ -198,6 +224,8 @@ return count of request to C<$path> endpoint
 sub count_of_requests {
     my ($self, $path) = @_;
 
+    $path = '/' if !defined $path;
+
     my $fh = path($self->mojo_home, convert_path_to_filename($path))->filehandle();
 
     my $lines = 0;
@@ -207,6 +235,29 @@ sub count_of_requests {
 
     return $lines;
 }
+
+=head2 list_of_requests_body($path)
+
+return list (ArrayRef) of requests body to C<$path> endpoint
+
+=cut
+sub list_of_requests_body {
+    my ($self, $path) = @_;
+
+    $path = '/' if !defined $path;
+
+    my $fh = path($self->mojo_home, convert_path_to_filename($path))->filehandle();
+
+    my @lines;
+    while (my $line = <$fh>) {
+        chomp $line;
+
+        push @lines, decode_json($line);
+    }
+
+    return \@lines;
+}
+
 
 sub DESTROY {
     my ($self) = @_;

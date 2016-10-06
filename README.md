@@ -59,6 +59,10 @@ For generating [Mojolicious](https://metacpan.org/pod/Mojolicious) application i
 
 return count of request to `$path` endpoint
 
+## list\_of\_requests\_body($path)
+
+return list (ArrayRef) of requests body to `$path` endpoint
+
 # LICENSE
 
 Copyright (C) Avast Software.
