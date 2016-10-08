@@ -2,6 +2,9 @@ Revision history for Perl extension Test-RestAPI
 
 {{$NEXT}}
 
+0.1.3 2016-10-08T12:14:15Z
+    - Added missing prereq 'parent' as reported by CPANTS.
+
 0.1.2 2016-10-06T17:15:40Z
     - fix render deep structure (json)
 

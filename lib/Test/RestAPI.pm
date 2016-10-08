@@ -1,7 +1,7 @@
 package Test::RestAPI;
 use Moo;
 
-our $VERSION = '0.1.2';
+our $VERSION = '0.1.3';
 
 use Types::Standard qw(ArrayRef InstanceOf Int Str);
 use Test::RestAPI::Endpoint qw(convert_path_to_filename);
