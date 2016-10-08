@@ -1,5 +1,6 @@
 requires 'perl', '5.010';
 
+requires 'parent';
 requires 'Moo';
 requires 'Type::Tiny';
 requires 'Mojolicious';
