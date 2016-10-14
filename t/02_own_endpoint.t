@@ -12,7 +12,7 @@ my $api = Test::RestAPI->new(
         Test::RestAPI::Endpoint->new(
             path => '/error',
             method => 'get',
-            render => {status => 404, text => 'Something not found'}
+            render => {status => 444, text => 'Something not found'}
         ),
     ]
 );
@@ -24,10 +24,10 @@ lives_ok {
 my $uri = $api->uri;
 
 my $ua = Mojo::UserAgent->new();
-is($ua->get($uri.'/error')->res->code(), 404, 'call /error endpoint');
+is($ua->get($uri.'/error')->res->code(), 444, 'call /error endpoint');
 
 is($api->count_of_requests('/error'), 1, 'first request');
 
-is($ua->get($uri.'/error')->res->code(), 404, 'call /error endpoint again');
+is($ua->get($uri.'/error')->res->code(), 444, 'call /error endpoint again');
 
 is($api->count_of_requests('/error'), 2, 'second request');

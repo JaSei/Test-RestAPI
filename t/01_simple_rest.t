@@ -23,5 +23,4 @@ is($ua->get($uri)->res->body(), 'Hello', 'response ok');
 undef $api;
 sleep 1;
 
-
-is_deeply($ua->get($uri)->res->error(), {message => 'Connection refused'}, 'after destroy Test object API is dead');
+ok($ua->get($uri)->res->error(), 'after destroy Test object API is dead');
