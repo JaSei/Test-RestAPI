@@ -1,12 +1,12 @@
 package Test::RestAPI;
 use Moo;
 
-our $VERSION = '0.1.3';
+our $VERSION = '0.1.4';
 
 use Types::Standard qw(ArrayRef InstanceOf Int Str);
 use Test::RestAPI::Endpoint qw(convert_path_to_filename);
 use Test::RestAPI::MojoGenerator;
-use Port::Generator;
+use Port::Selector;
 use Path::Tiny;
 use Mojo::JSON qw(decode_json);
 use Mojo::UserAgent;
@@ -158,7 +158,7 @@ sub _start {
 sub _create_uri {
     my ($self) = @_;
 
-    my $port = Port::Generator->new->port();
+    my $port = Port::Selector->new->port();
 
     $self->uri("http://localhost:$port");
 }

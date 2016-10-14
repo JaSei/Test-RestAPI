@@ -5,7 +5,7 @@ requires 'Moo';
 requires 'Type::Tiny';
 requires 'Mojolicious';
 requires 'Path::Tiny';
-requires 'Port::Generator';
+requires 'Port::Selector';
 
 on 'test' => sub {
     requires 'Test::More', '0.98';
