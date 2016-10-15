@@ -17,7 +17,7 @@ BEGIN {
     if (WINDOWS) {
         ## no critic (ProhibitStringyEval)
         eval q{
-            use Win32::Process qw(NORMAL_PRIORITY_CLASS CREATE_NEW_CONSOLE);
+            use Win32::Process qw(NORMAL_PRIORITY_CLASS);
         };
 
         die $@ if $@;
@@ -165,18 +165,26 @@ sub _create_uri {
 sub _start_win {
     my ($self, $app_path) = @_;
 
-    my $args = 'perl '.$app_path->canonpath().' '.join ' ', $self->_mojo_args();
+    #This trick is copied from IPC::System::Simple
+    #If is check in this sub to non-Win32 system,
+    #perl don't check NORMAL_PRIORITY_CLASS constant in compilation phase.
+    if (!WINDOWS) {
+        die '_start_win ca be called only anna Windows';
+    }
+    else {
+        my $args = 'perl '.$app_path->canonpath().' '.join ' ', $self->_mojo_args();
 
-    Win32::Process::Create(
-        my $proc,
-        $^X,
-        $args,
-        0,
-        NORMAL_PRIORITY_CLASS,
-        "."
-    ) || die "Process $args start fail $^E";
+        Win32::Process::Create(
+            my $proc,
+            $^X,
+            $args,
+            0,
+            NORMAL_PRIORITY_CLASS,
+            "."
+        ) || die "Process $args start fail $^E";
 
-    return $proc->GetProcessID();
+        return $proc->GetProcessID();
+    }
 }
 
 sub _start_fork {
