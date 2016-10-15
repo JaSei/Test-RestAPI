@@ -1,7 +1,7 @@
 package Test::RestAPI;
 use Moo;
 
-our $VERSION = '0.1.4';
+our $VERSION = '0.1.5';
 
 use Types::Standard qw(ArrayRef InstanceOf Int Str);
 use Test::RestAPI::Endpoint qw(convert_path_to_filename);
@@ -11,17 +11,16 @@ use Path::Tiny;
 use Mojo::JSON qw(decode_json);
 use Mojo::UserAgent;
 
+use constant WINDOWS => ($^O eq 'MSWin32');
+
 BEGIN {
-    if ($^O eq 'MSWin32') {
+    if (WINDOWS) {
         ## no critic (ProhibitStringyEval)
         eval q{
             use Win32::Process qw(NORMAL_PRIORITY_CLASS);
         };
 
         die $@ if $@;
-    }
-    else {
-        use constant NORMAL_PRIORITY_CLASS => 'fake';
     }
 }
 
@@ -109,7 +108,7 @@ has 'uri' => (
 );
 
 has 'mojo_home' => (
-    is => 'ro',
+    is      => 'ro',
     default => sub {
         my $mojo_home = Path::Tiny->tempdir();
 
@@ -117,7 +116,7 @@ has 'mojo_home' => (
 
         return $mojo_home;
     }
-);
+);  
 
 =head3 start
 
@@ -134,8 +133,6 @@ sub start {
 
     my $app_path = $self->mojo_app_generator->create_app($self->endpoints);
 
-    use feature qw(say);
-
     $self->pid($self->_start($app_path));
 }
 
@@ -144,11 +141,13 @@ sub _start {
 
     $self->_create_uri();
 
-    if ($^O eq 'MSWin32') {
-        return $self->_start_win($app_path);
+    my $pid;
+    if (WINDOWS) {
+        $pid = $self->_start_win($app_path);
     }
-
-    my $pid =$self->_start_fork($app_path);
+    else {
+        $pid = $self->_start_fork($app_path);
+    }
 
     $self->_wait_to_start();
 
@@ -166,21 +165,26 @@ sub _create_uri {
 sub _start_win {
     my ($self, $app_path) = @_;
 
-    require Win32::Process;
-    Win32::Process->import();
+    #This trick is copied from IPC::System::Simple
+    #If is check in this sub to non-Win32 system,
+    #perl don't check NORMAL_PRIORITY_CLASS constant in compilation phase.
+    if (!WINDOWS) {
+        die '_start_win ca be called only anna Windows';
+    }
+    else {
+        my $args = 'perl '.$app_path->canonpath().' '.join ' ', $self->_mojo_args();
 
-    my $args = 'perl '.$app_path->stringify.' '.$self->_mojo_args();
+        Win32::Process::Create(
+            my $proc,
+            $^X,
+            $args,
+            0,
+            NORMAL_PRIORITY_CLASS,
+            "."
+        ) || die "Process $args start fail $^E";
 
-    Win32::Process::Create(
-        my $proc,
-        $^X,
-        $args,
-        0,
-        NORMAL_PRIORITY_CLASS,
-        "."
-    ) || die "Process $args start fail $^E";
-
-    return $proc->GetProcessID();
+        return $proc->GetProcessID();
+    }
 }
 
 sub _start_fork {
@@ -205,7 +209,7 @@ sub _start_fork {
 sub _mojo_args {
     my ($self) = @_;
 
-    return ('daemon', '-l', $self->uri, '-m', 'production', '--home', $self->mojo_home->stringify);
+    return ('daemon', '-l', $self->uri, '-m', 'production', '--home', $self->mojo_home->canonpath());
 }
 
 sub _wait_to_start {
@@ -265,7 +269,12 @@ sub list_of_requests_body {
 sub DESTROY {
     my ($self) = @_;
 
-    kill 15, $self->pid;
+    if ($^O eq 'MSWin32') {
+        Win32::Process::KillProcess($self->pid, 0);
+    }
+    else {
+        kill 'SIGTERM', $self->pid;
+    }
 }
 
 =head1 LICENSE
