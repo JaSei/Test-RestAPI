@@ -11,8 +11,10 @@ use Path::Tiny;
 use Mojo::JSON qw(decode_json);
 use Mojo::UserAgent;
 
+use constant WINDOWS => ($^O eq 'MSWin32');
+
 BEGIN {
-    if ($^O eq 'MSWin32') {
+    if (WINDOWS) {
         ## no critic (ProhibitStringyEval)
         eval q{
             use Win32::Process qw(NORMAL_PRIORITY_CLASS CREATE_NEW_CONSOLE);
@@ -140,7 +142,7 @@ sub _start {
     $self->_create_uri();
 
     my $pid;
-    if ($^O eq 'MSWin32') {
+    if (WINDOWS) {
         $pid = $self->_start_win($app_path);
     }
     else {
@@ -164,8 +166,6 @@ sub _start_win {
     my ($self, $app_path) = @_;
 
     my $args = 'perl '.$app_path->canonpath().' '.join ' ', $self->_mojo_args();
-
-    no warnings;   ## no critic
 
     Win32::Process::Create(
         my $proc,
