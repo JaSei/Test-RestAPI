@@ -1,6 +1,8 @@
 Revision history for Perl extension Test-RestAPI
 
 {{$NEXT}}
+
+0.1.5 2016-10-16T18:30:34Z
     - Windows compatibility fixes
     - locale test fix
 
