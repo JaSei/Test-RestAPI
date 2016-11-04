@@ -1,7 +1,7 @@
 package Test::RestAPI;
 use Moo;
 
-our $VERSION = '0.1.5';
+our $VERSION = '0.1.6';
 
 use Types::Standard qw(ArrayRef InstanceOf Int Str);
 use Test::RestAPI::Endpoint qw(convert_path_to_filename);
@@ -33,7 +33,7 @@ Test::RestAPI - Real mock of REST API
     my $api = Test::RestAPI->new(
         endpoints => [
             Test::RestAPI::Endpoint->new(
-                endpoint => '/a',
+                path => '/a',
                 method   => 'any',
             )
         ],
@@ -62,9 +62,9 @@ I<ArrayRef> of instances L<Test::RestAPI::Endpoint>
 default is I</> (root) 200 OK - hello:
 
     Test::RestAPI::Endpoint->new(
-        endpoint => '/',
-        method   => 'any',
-        body     => 'Hello',
+        path   => '/',
+        method => 'any',
+        render => {text => 'Hello'},
     );
 
 =cut

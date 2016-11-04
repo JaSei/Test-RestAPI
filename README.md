@@ -7,7 +7,7 @@ Test::RestAPI - Real mock of REST API
     my $api = Test::RestAPI->new(
         endpoints => [
             Test::RestAPI::Endpoint->new(
-                endpoint => '/a',
+                path => '/a',
                 method   => 'any',
             )
         ],
@@ -35,9 +35,9 @@ _ArrayRef_ of instances [Test::RestAPI::Endpoint](https://metacpan.org/pod/Test:
 default is _/_ (root) 200 OK - hello:
 
     Test::RestAPI::Endpoint->new(
-        endpoint => '/',
-        method   => 'any',
-        body     => 'Hello',
+        path   => '/',
+        method => 'any',
+        render => {text => 'Hello'},
     );
 
 #### mojo\_app\_generator
